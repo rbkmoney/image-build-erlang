@@ -3,14 +3,14 @@
 build('image-build-erlang', 'docker-host') {
   checkoutRepo()
     runStage('build image') {
-      docker.withPrivateRegistry('https://dr2.rbkmoney.com/v2/', 'jenkins_harbor') {
+      withPrivateRegistry() {
         sh 'make build_erlang'
       }
   }
   try {
     if (env.BRANCH_NAME == 'master') {
       runStage('docker image push') {
-        docker.withPrivateRegistry('https://dr2.rbkmoney.com/v2/', 'jenkins_harbor') {
+        withPrivateRegistry() {
           sh 'make push'
         }
       }
