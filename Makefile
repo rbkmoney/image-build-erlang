@@ -27,4 +27,3 @@ clean:
 	test -f .state \
 	&& $(DOCKER) rmi -f "$(SERVICE_IMAGE_NAME):$(shell cat .state)" \
 	&& rm .state
-	test -f files/id_ed25519 && rm files/id_ed25519
