@@ -4,7 +4,7 @@ build('image-build-erlang', 'docker-host') {
   checkoutRepo()
     runStage('build image') {
       withPrivateRegistry() {
-        sh 'make build_erlang'
+        sh 'make build-erlang'
       }
   }
   try {
