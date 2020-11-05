@@ -28,11 +28,14 @@ ENV SWAGGER_BINDIR="/usr/local/bin"
 ENV SWAGGER_JARFILE="swagger-codegen-cli.jar"
 
 RUN set -xe \
-    && fetchDeps=' \
-        wget \
-        ca-certificates' \
+	&& buildDeps=' \
+	    flex \
+	    bison \
+		libboost-all-dev \
+	' \
     && apt-get update \
-    && apt-get install -y --no-install-recommends $fetchDeps \
+	&& apt-get install -y --no-install-recommends $buildDeps \
+    && mkdir -p /usr/src \
 
     # Install Java
     && wget -q "https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/${JAVA_VERSION}/OpenJDK8U-jdk_x64_linux_hotspot_8u272b10.tar.gz" -O /tmp/openjdk.tar.gz \
@@ -43,6 +46,7 @@ RUN set -xe \
     && export PATH="/opt/java/openjdk/bin:$PATH" \
     && rm -rf /tmp/openjdk.tar.gz \
 
+    # Install Maven
     && wget -q "https://downloads.apache.org/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz" \
         -O /tmp/maven.tar.gz \
     && echo "${MAVEN_HASH}  /tmp/maven.tar.gz" | sha512sum -c - \
@@ -51,30 +55,6 @@ RUN set -xe \
     && tar -xf /tmp/maven.tar.gz --strip-components=1 \
     && export PATH="/opt/maven/bin:$PATH" \
     && rm -rf /tmp/maven.tar.gz \
-
-    && runtimeDeps=' \
-		libtool \
-		dpkg-dev \
-		gcc \
-		g++ \
-		make \
-        python2 \
-        git \
-        openssh-client \
-    ' \
-	&& buildDeps=' \
-		flex \
-		bison \
-		automake \
-		autoconf \
-        libssl-dev \
-		libevent-dev \
-		libboost-all-dev \
-		pkg-config \
-	' \
-	&& apt-get install -y --no-install-recommends $runtimeDeps \
-	&& apt-get install -y --no-install-recommends $buildDeps \
-    && mkdir -p /usr/src \
 
     # Install thrift
     && mkdir /usr/src/thrift \
@@ -140,7 +120,7 @@ RUN set -xe \
     && mkdir -p "${SWAGGER_LIBDIR}" "${SWAGGER_BINDIR}" \
     && cp -v "modules/swagger-codegen-cli/target/${SWAGGER_JARFILE}" "${SWAGGER_LIBDIR}/${SWAGGER_JARFILE}" \
     && test -f "${SWAGGER_LIBDIR}/${SWAGGER_JARFILE}" || exit 1 \
-    && echo $'#/bin/sh\n \
+    && echo '#!/bin/sh\n \
 java -jar "${SWAGGER_LIBDIR}/${SWAGGER_JARFILE}" $*\n' \
         > "${SWAGGER_BINDIR}/swagger-codegen" \
     && chmod +x "${SWAGGER_BINDIR}/swagger-codegen" \
@@ -152,7 +132,8 @@ java -jar "${SWAGGER_LIBDIR}/${SWAGGER_JARFILE}" $*\n' \
     && rm -rf /root/.m2 \
     && rm -rf /root/.cache \
     && rm -rf /opt/maven \
-	&& apt-get purge -y --auto-remove $buildDeps $fetchDeps \
+	&& apt-get purge -y --auto-remove $buildDeps \
+	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
 
 ENV JAVA_HOME=/opt/java/openjdk
