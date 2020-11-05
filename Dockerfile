@@ -106,7 +106,7 @@ RUN set -xe \
     && mkdir -p "${SWAGGER_LIBDIR}" "${SWAGGER_BINDIR}" \
     && cp -v "modules/swagger-codegen-cli/target/${SWAGGER_JARFILE}" "${SWAGGER_LIBDIR}/${SWAGGER_JARFILE}" \
     && test -f "${SWAGGER_LIBDIR}/${SWAGGER_JARFILE}" || exit 1 \
-    && echo $'#/bin/sh\n \
+    && echo '#!/bin/sh\n \
 java -jar "${SWAGGER_LIBDIR}/${SWAGGER_JARFILE}" $*\n' \
         > "${SWAGGER_BINDIR}/swagger-codegen" \
     && chmod +x "${SWAGGER_BINDIR}/swagger-codegen" \
