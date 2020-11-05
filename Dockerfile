@@ -1,6 +1,12 @@
-FROM erlang:22.3.4.11-alpine
+FROM erlang:22.3.4.12
 
 ENV LANG=C.UTF-8
+
+ENV JAVA_VERSION=jdk8u272-b10
+ENV JAVA_HASH='6f124b69d07d8d3edf39b9aa5c58473f63a380b686ddb73a5495e01d25c2939a'
+
+ENV MAVEN_VERSION="3.6.3"
+ENV MAVEN_HASH="c35a1803a6e70a126e80b2b3ae33eed961f83ed74d18fcd16909b2d44d7dada3203f1ffe726c17ef8dcca2dcaa9fca676987befeadc9b9f759967a8cb77181c0"
 
 ENV ELVIS_VERSION="0.3.0"
 ENV ELVIS_VERSION_HASH="9991522a9b641eafdc29623a24b2b178c88bdf8b"
@@ -22,24 +28,52 @@ ENV SWAGGER_BINDIR="/usr/local/bin"
 ENV SWAGGER_JARFILE="swagger-codegen-cli.jar"
 
 RUN set -xe \
-    && apk add --no-cache --virtual .build-deps \
-        gcc \
-        g++ \
-        make \
-        autoconf \
-        automake \
+    && fetchDeps=' \
+        wget \
+        ca-certificates' \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends $fetchDeps \
+
+    # Install Java
+    && wget -q "https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/${JAVA_VERSION}/OpenJDK8U-jdk_x64_linux_hotspot_8u272b10.tar.gz" -O /tmp/openjdk.tar.gz \
+    && echo "${JAVA_HASH}  /tmp/openjdk.tar.gz" | sha256sum -c - \
+    && mkdir -p /opt/java/openjdk \
+    && cd /opt/java/openjdk \
+    && tar -xf /tmp/openjdk.tar.gz --strip-components=1 \
+    && export PATH="/opt/java/openjdk/bin:$PATH" \
+    && rm -rf /tmp/openjdk.tar.gz \
+
+    && wget -q "https://downloads.apache.org/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz" \
+        -O /tmp/maven.tar.gz \
+    && echo "${MAVEN_HASH}  /tmp/maven.tar.gz" | sha512sum -c - \
+    && mkdir -p /opt/maven \
+    && cd /opt/maven \
+    && tar -xf /tmp/maven.tar.gz --strip-components=1 \
+    && export PATH="/opt/maven/bin:$PATH" \
+    && rm -rf /tmp/maven.tar.gz \
+
+    && runtimeDeps=' \
+		libtool \
+		dpkg-dev \
+		gcc \
+		g++ \
+		make \
+        python2 \
         git \
-        bison \
-        boost-dev \
-        boost-static \
-        flex \
-        libevent-dev \
-        libtool \
-        openssl-dev \
-        zlib-dev \
-        openjdk8 \
-        maven \
-        coreutils \
+        openssh-client \
+    ' \
+	&& buildDeps=' \
+		flex \
+		bison \
+		automake \
+		autoconf \
+        libssl-dev \
+		libevent-dev \
+		libboost-all-dev \
+		pkg-config \
+	' \
+	&& apt-get install -y --no-install-recommends $runtimeDeps \
+	&& apt-get install -y --no-install-recommends $buildDeps \
     && mkdir -p /usr/src \
 
     # Install thrift
@@ -117,27 +151,10 @@ java -jar "${SWAGGER_LIBDIR}/${SWAGGER_JARFILE}" $*\n' \
     && rm -rf /usr/src \
     && rm -rf /root/.m2 \
     && rm -rf /root/.cache \
-    && scanelf --nobanner -E ET_EXEC -BF '%F' --recursive /usr/local | xargs -r strip --strip-all \
-	&& scanelf --nobanner -E ET_DYN -BF '%F' --recursive /usr/local | xargs -r strip --strip-unneeded \
-	&& runDeps="$( \
-		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
-			| tr ',' '\n' \
-			| sort -u \
-			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
-	)" \
-    && apk add --no-cache --virtual .build-rundeps \
-		$runDeps \
-        openjdk8-jre-base \
-        make \
-        bash \
-        shadow \
-        git \
-        gcc \
-        python2 \
-        g++ \
-        openssh-client \
-        coreutils \
-    && apk --no-cache del .build-deps \
-    && rm /var/cache/apk/*
+    && rm -rf /opt/maven \
+	&& apt-get purge -y --auto-remove $buildDeps $fetchDeps \
+	&& rm -rf /var/lib/apt/lists/*
 
-CMD ["sh"]
+ENV JAVA_HOME=/opt/java/openjdk
+ENV PATH="/opt/java/openjdk/bin:$PATH"
+CMD ["bash"]
