@@ -106,9 +106,8 @@ RUN set -xe \
     && mkdir -p "${SWAGGER_LIBDIR}" "${SWAGGER_BINDIR}" \
     && cp -v "modules/swagger-codegen-cli/target/${SWAGGER_JARFILE}" "${SWAGGER_LIBDIR}/${SWAGGER_JARFILE}" \
     && test -f "${SWAGGER_LIBDIR}/${SWAGGER_JARFILE}" || exit 1 \
-    && echo '#!/bin/sh\n \
-java -jar "${SWAGGER_LIBDIR}/${SWAGGER_JARFILE}" $*\n' \
-        > "${SWAGGER_BINDIR}/swagger-codegen" \
+    && echo "#!/bin/sh" > "${SWAGGER_BINDIR}/swagger-codegen" \
+    && echo "java -jar \"${SWAGGER_LIBDIR}/${SWAGGER_JARFILE}\" \$*" >> "${SWAGGER_BINDIR}/swagger-codegen" \
     && chmod +x "${SWAGGER_BINDIR}/swagger-codegen" \
     && cd / \
     && rm -rf /usr/src/swagger-codegen \
@@ -125,7 +124,7 @@ java -jar "${SWAGGER_LIBDIR}/${SWAGGER_JARFILE}" $*\n' \
 			| sort -u \
 			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
 	)" \
-    && apk add --no-cache --virtual .build-rundeps \
+    && apk add --no-cache --virtual .run-rundeps \
 		$runDeps \
         openjdk8-jre-base \
         make \
