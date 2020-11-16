@@ -125,7 +125,7 @@ java -jar "${SWAGGER_LIBDIR}/${SWAGGER_JARFILE}" $*\n' \
 			| sort -u \
 			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
 	)" \
-    && apk add --no-cache --virtual .build-rundeps \
+    && apk add --no-cache --virtual .run-rundeps \
 		$runDeps \
         openjdk8-jre-base \
         make \
