@@ -23,6 +23,7 @@ fi)
 
 push:
 	$(DOCKER) push "$(REGISTRY)/$(SERVICE_IMAGE_NAME):$(shell cat .state)"
+	$(DOCKER) push "$(SERVICE_IMAGE_NAME):$(shell cat .state)"
 
 clean:
 	test -f .state \
