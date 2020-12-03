@@ -25,9 +25,6 @@ fi)
 push:
 	$(DOCKER) push "$(REGISTRY)/$(SERVICE_IMAGE_NAME):$(shell cat .state)"
 
-push_github:
-	$(DOCKER) push "$(GITHUB_REGISTRY)/$(SERVICE_IMAGE_NAME):$(shell cat .state)"
-
 clean:
 	test -f .state \
 	&& $(DOCKER) rmi -f "$(REGISTRY)/$(SERVICE_IMAGE_NAME):$(shell cat .state)" \

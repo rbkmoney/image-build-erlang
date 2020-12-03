@@ -23,5 +23,9 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build
       run: make
+      env:
+        REGISTRY: ghcr.io
     - name: Push
-      run: make push_github
+      run: make push
+      env:
+        REGISTRY: ghcr.io
