@@ -1,6 +1,7 @@
 SERVICE_NAME := build-erlang
 SERVICE_IMAGE_NAME ?= rbkmoney/build-erlang
 REGISTRY ?= dr2.rbkmoney.com
+GITHUB_REGISTRY ?= ghcr.io
 DOCKER := docker
 .PHONY: $(SERVICE_NAME) push clean
 $(SERVICE_NAME): .state
@@ -23,7 +24,9 @@ fi)
 
 push:
 	$(DOCKER) push "$(REGISTRY)/$(SERVICE_IMAGE_NAME):$(shell cat .state)"
-	$(DOCKER) push "$(SERVICE_IMAGE_NAME):$(shell cat .state)"
+
+push_github:
+	$(DOCKER) push "$(GITHUB_REGISTRY)/$(SERVICE_IMAGE_NAME):$(shell cat .state)"
 
 clean:
 	test -f .state \

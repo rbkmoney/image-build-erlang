@@ -1,0 +1,27 @@
+
+name: CI
+
+on:
+  # push should probably trigger a separate workflow
+  #
+  # push:
+  #   branches: [ master ]
+  #   paths-ignore:
+  #     - 'README.md'
+  #     - 'LICENSE'
+  pull_request:
+    branches: [ master ]
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE'
+
+jobs:
+  test_build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build
+      run: make
+    # - name: Push
+    #   run: make push_github

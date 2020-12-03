@@ -13,6 +13,7 @@ build('image-build-erlang', 'docker-host') {
         withPrivateRegistry() {
           sh 'make push'
         }
+        sh 'make push_github'
       }
     }
   } finally {
