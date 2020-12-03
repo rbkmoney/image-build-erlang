@@ -23,5 +23,5 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build
       run: make
-    # - name: Push
-    #   run: make push_github
+    - name: Push
+      run: make push_github
