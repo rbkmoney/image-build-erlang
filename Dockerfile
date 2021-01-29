@@ -126,7 +126,7 @@ RUN set -xe \
 	)" \
     && apk add --no-cache --virtual .run-rundeps \
 		$runDeps \
-        openjdk8-jre-base \
+        openjdk8 \
         maven \
         make \
         bash \
