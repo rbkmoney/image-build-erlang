@@ -1,4 +1,4 @@
-FROM erlang:23.2.3.0-alpine
+FROM erlang:23.2.5.0-alpine
 
 ENV LANG=C.UTF-8
 
