@@ -1,5 +1,5 @@
 SERVICE_NAME := build-erlang
-SERVICE_IMAGE_NAME ?= rbkmoney/build-erlang
+SERVICE_IMAGE_NAME ?= ciiol/build-erlang
 REGISTRY ?= dr2.rbkmoney.com
 DOCKER := docker
 .PHONY: $(SERVICE_NAME) push clean
