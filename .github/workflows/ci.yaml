@@ -5,11 +5,15 @@ on:
     branches: [ master ]
 
 jobs:
-  test_build:
+  test-build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: Build
       run: make
+      env:
+        REGISTRY: ghcr.io
+    - name: Push
+      run: make push
       env:
         REGISTRY: ghcr.io
