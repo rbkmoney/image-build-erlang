@@ -1,6 +1,4 @@
-FROM erlang:23.2.5.0-alpine
-
-ENV LANG=C.UTF-8
+FROM erlang:23.2.5.0
 
 ENV ELVIS_VERSION="1.0.0"
 ENV ELVIS_VERSION_HASH="41c1b625f1f90f1a5e2d29b62594086d74c5b79c"
@@ -22,24 +20,38 @@ ENV SWAGGER_BINDIR="/usr/local/bin"
 ENV SWAGGER_JARFILE="swagger-codegen-cli.jar"
 
 RUN set -xe \
-    && apk add --no-cache --virtual .build-deps \
+    && fetchDeps=' \
+        software-properties-common \
+    ' \
+    && buildDeps=' \
+        autoconf \
+        automake \
+        flex \
+        bison \
+        libboost-dev \
+        libevent-dev \
+        libssl-dev \
+        libtool \
+        wget \
+        qt4-dev-tools \
+        pkg-config \
+    ' \
+    && runtimeDeps=' \
+        bash \
         gcc \
         g++ \
         make \
-        autoconf \
-        automake \
         git \
-        bison \
-        boost-dev \
-        boost-static \
-        flex \
-        libevent-dev \
-        libtool \
-        openssl-dev \
-        zlib-dev \
-        openjdk8 \
-        maven \
-        coreutils \
+        openssh-client \
+        openssl \
+        python2 \
+    ' \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends $fetchDeps $buildDeps $runtimeDeps\
+    && apt-add-repository 'deb http://security.debian.org/debian-security stretch/updates main' \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends openjdk-8-jdk-headless \
+    && apt-get install -y --no-install-recommends maven \
     && mkdir -p /usr/src \
 
     # Install thrift
@@ -116,28 +128,7 @@ RUN set -xe \
     && rm -rf /usr/src \
     && rm -rf /root/.m2 \
     && rm -rf /root/.cache \
-    && scanelf --nobanner -E ET_EXEC -BF '%F' --recursive /usr/local | xargs -r strip --strip-all \
-	&& scanelf --nobanner -E ET_DYN -BF '%F' --recursive /usr/local | xargs -r strip --strip-unneeded \
-	&& runDeps="$( \
-		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
-			| tr ',' '\n' \
-			| sort -u \
-			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
-	)" \
-    && apk add --no-cache --virtual .run-rundeps \
-		$runDeps \
-        openjdk8 \
-        maven \
-        make \
-        bash \
-        shadow \
-        git \
-        gcc \
-        python2 \
-        g++ \
-        openssh-client \
-        coreutils \
-    && apk --no-cache del .build-deps \
-    && rm /var/cache/apk/*
+    && apt-get purge -y --auto-remove $fetchDeps $buildDeps \
+    && rm -rf $ERL_TOP /var/lib/apt/lists/*
 
-CMD ["sh"]
+CMD ["bash"]
