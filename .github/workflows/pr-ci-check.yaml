@@ -31,7 +31,7 @@ jobs:
         DOCKER_BUILD_OPTIONS: >-
           --cache-to type=local,dest=/tmp/.buildx-cache-new
           --cache-from type=local,src=/tmp/.buildx-cache
-          --platform linux/amd64,linux/arm64
+          --platform linux/amd64
     - name: Move cache
       # Work-around to remove old layers
       # https://github.com/docker/build-push-action/issues/252
