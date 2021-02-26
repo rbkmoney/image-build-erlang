@@ -1,7 +1,9 @@
 SERVICE_NAME := build-erlang
-SERVICE_IMAGE_NAME ?= rbkmoney/build-erlang
+ORG_NAME ?= rbkmoney
+SERVICE_IMAGE_NAME ?= $(ORG_NAME)/build-erlang
 REGISTRY ?= dr2.rbkmoney.com
-DOCKER := docker
+DOCKER ?= docker
+DOCKER_BUILD_OPTIONS ?=
 .PHONY: $(SERVICE_NAME) push clean
 $(SERVICE_NAME): .state
 
@@ -18,7 +20,7 @@ fi)
 
 .state:
 	$(eval TAG := $(shell git rev-parse HEAD))
-	$(DOCKER) build -t "$(REGISTRY)/$(SERVICE_IMAGE_NAME):$(TAG)" .
+	$(DOCKER) build -t "$(REGISTRY)/$(SERVICE_IMAGE_NAME):$(TAG)" $(DOCKER_BUILD_OPTIONS) .
 	echo $(TAG) > $@
 
 push:
