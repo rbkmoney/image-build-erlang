@@ -1,4 +1,6 @@
-FROM erlang:24.0-rc1
+FROM erlang:23.2.7.0
+
+ENV LANG=C.UTF-8
 
 ENV ELVIS_VERSION="1.0.0"
 ENV ELVIS_VERSION_HASH="41c1b625f1f90f1a5e2d29b62594086d74c5b79c"
@@ -33,7 +35,6 @@ RUN set -xe \
         libssl-dev \
         libtool \
         wget \
-        qt4-dev-tools \
         pkg-config \
     ' \
     && runtimeDeps=' \
@@ -44,8 +45,6 @@ RUN set -xe \
         git \
         openssh-client \
         openssl \
-        linux-tools \
-        python2 \
     ' \
     && apt-get update \
     && apt-get install -y --no-install-recommends $fetchDeps $buildDeps $runtimeDeps\
@@ -85,17 +84,17 @@ RUN set -xe \
     && rm -rf /usr/src/woorl \
 
     # Install Elvis
-#    && mkdir /usr/src/elvis \
-#    && cd /usr/src/elvis \
-#    && wget -q "https://github.com/inaka/elvis/archive/${ELVIS_VERSION}.tar.gz" -O elvis.tar.gz \
-#    && echo "${ELVIS_VERSION_HASH}  elvis.tar.gz" | sha1sum -c - \
-#    && tar xzf elvis.tar.gz --strip-components=1 \
-#    && rebar3 escriptize \
-#    && cp _build/default/bin/elvis /usr/local/bin/ \
-#    && chmod +x /usr/local/bin/elvis \
-#    && elvis -v \
-#    && cd / \
-#    && rm -rf /usr/src/elvis \
+    && mkdir /usr/src/elvis \
+    && cd /usr/src/elvis \
+    && wget -q "https://github.com/inaka/elvis/archive/${ELVIS_VERSION}.tar.gz" -O elvis.tar.gz \
+    && echo "${ELVIS_VERSION_HASH}  elvis.tar.gz" | sha1sum -c - \
+    && tar xzf elvis.tar.gz --strip-components=1 \
+    && rebar3 escriptize \
+    && cp _build/default/bin/elvis /usr/local/bin/ \
+    && chmod +x /usr/local/bin/elvis \
+    && elvis -v \
+    && cd / \
+    && rm -rf /usr/src/elvis \
 
     # Install Elixir
     && mkdir /usr/src/elixir \
@@ -103,7 +102,7 @@ RUN set -xe \
     && wget -q "https://github.com/elixir-lang/elixir/archive/${ELIXIR_VERSION}.tar.gz" -O elixir.tar.gz \
     && echo "${ELIXIR_VERSION_HASH}  elixir.tar.gz" | sha1sum -c - \
     && tar xzf elixir.tar.gz --strip-components=1 \
-    && make install \
+    && make install clean \
     && cd / \
     && rm -rf /usr/src/elixir \
 
