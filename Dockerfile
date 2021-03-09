@@ -26,28 +26,12 @@ RUN set -xe \
         software-properties-common \
     ' \
     && buildDeps=' \
-        autoconf \
-        automake \
         flex \
         bison \
         libboost-dev \
-        libevent-dev \
-        libssl-dev \
-        libtool \
-        wget \
-        pkg-config \
-    ' \
-    && runtimeDeps=' \
-        bash \
-        gcc \
-        g++ \
-        make \
-        git \
-        openssh-client \
-        openssl \
     ' \
     && apt-get update \
-    && apt-get install -y --no-install-recommends $fetchDeps $buildDeps $runtimeDeps\
+    && apt-get install -y --no-install-recommends $fetchDeps $buildDeps \
     && apt-add-repository 'deb http://security.debian.org/debian-security stretch/updates main' \
     && apt-get update \
     && apt-get install -y --no-install-recommends openjdk-8-jdk-headless \
@@ -65,6 +49,7 @@ RUN set -xe \
         --disable-dependency-tracking \
         --with-erlang \
         --without-cpp \
+        --without-java \
         --disable-tutorial \
     && make -j$(getconf _NPROCESSORS_ONLN) \
     && make install \
