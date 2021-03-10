@@ -1,4 +1,4 @@
-FROM erlang:23.2.7
+FROM erlang:24.0-rc1
 
 ENV LANG=C.UTF-8
 
@@ -35,7 +35,7 @@ RUN set -xe \
     && apt-add-repository 'deb http://security.debian.org/debian-security stretch/updates main' \
     && apt-get update \
     && apt-get install -y --no-install-recommends openjdk-8-jdk-headless \
-    && apt-get install -y --no-install-recommends maven \
+    && apt-get install -y --no-install-recommends maven linux-perf \
     && mkdir -p /usr/src \
 
     # Install thrift
@@ -69,17 +69,17 @@ RUN set -xe \
     && rm -rf /usr/src/woorl \
 
     # Install Elvis
-    && mkdir /usr/src/elvis \
-    && cd /usr/src/elvis \
-    && wget -q "https://github.com/inaka/elvis/archive/${ELVIS_VERSION}.tar.gz" -O elvis.tar.gz \
-    && echo "${ELVIS_VERSION_HASH}  elvis.tar.gz" | sha1sum -c - \
-    && tar xzf elvis.tar.gz --strip-components=1 \
-    && rebar3 escriptize \
-    && cp _build/default/bin/elvis /usr/local/bin/ \
-    && chmod +x /usr/local/bin/elvis \
-    && elvis -v \
-    && cd / \
-    && rm -rf /usr/src/elvis \
+#    && mkdir /usr/src/elvis \
+#    && cd /usr/src/elvis \
+#    && wget -q "https://github.com/inaka/elvis/archive/${ELVIS_VERSION}.tar.gz" -O elvis.tar.gz \
+#    && echo "${ELVIS_VERSION_HASH}  elvis.tar.gz" | sha1sum -c - \
+#    && tar xzf elvis.tar.gz --strip-components=1 \
+#    && rebar3 escriptize \
+#    && cp _build/default/bin/elvis /usr/local/bin/ \
+#    && chmod +x /usr/local/bin/elvis \
+#    && elvis -v \
+#    && cd / \
+#    && rm -rf /usr/src/elvis \
 
     # Install Elixir
     && mkdir /usr/src/elixir \
