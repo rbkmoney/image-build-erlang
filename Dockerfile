@@ -114,6 +114,7 @@ RUN set -xe \
     && rm -rf /root/.m2 \
     && rm -rf /root/.cache \
     && apt-get purge -y --auto-remove $fetchDeps $buildDeps \
+    && apt-get clean \
     && rm -rf $ERL_TOP /var/lib/apt/lists/*
 
 CMD ["bash"]
