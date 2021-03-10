@@ -1,4 +1,4 @@
-FROM erlang:23.2.5.0-alpine
+FROM erlang:23.2.7
 
 ENV LANG=C.UTF-8
 
@@ -22,24 +22,20 @@ ENV SWAGGER_BINDIR="/usr/local/bin"
 ENV SWAGGER_JARFILE="swagger-codegen-cli.jar"
 
 RUN set -xe \
-    && apk add --no-cache --virtual .build-deps \
-        gcc \
-        g++ \
-        make \
-        autoconf \
-        automake \
-        git \
-        bison \
-        boost-dev \
-        boost-static \
+    && fetchDeps=' \
+        software-properties-common \
+    ' \
+    && buildDeps=' \
         flex \
-        libevent-dev \
-        libtool \
-        openssl-dev \
-        zlib-dev \
-        openjdk8 \
-        maven \
-        coreutils \
+        bison \
+        libboost-dev \
+    ' \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends $fetchDeps $buildDeps \
+    && apt-add-repository 'deb http://security.debian.org/debian-security stretch/updates main' \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends openjdk-8-jdk-headless \
+    && apt-get install -y --no-install-recommends maven \
     && mkdir -p /usr/src \
 
     # Install thrift
@@ -53,6 +49,7 @@ RUN set -xe \
         --disable-dependency-tracking \
         --with-erlang \
         --without-cpp \
+        --without-java \
         --disable-tutorial \
     && make -j$(getconf _NPROCESSORS_ONLN) \
     && make install \
@@ -90,7 +87,7 @@ RUN set -xe \
     && wget -q "https://github.com/elixir-lang/elixir/archive/${ELIXIR_VERSION}.tar.gz" -O elixir.tar.gz \
     && echo "${ELIXIR_VERSION_HASH}  elixir.tar.gz" | sha1sum -c - \
     && tar xzf elixir.tar.gz --strip-components=1 \
-    && make install \
+    && make install clean \
     && cd / \
     && rm -rf /usr/src/elixir \
 
@@ -116,28 +113,8 @@ RUN set -xe \
     && rm -rf /usr/src \
     && rm -rf /root/.m2 \
     && rm -rf /root/.cache \
-    && scanelf --nobanner -E ET_EXEC -BF '%F' --recursive /usr/local | xargs -r strip --strip-all \
-	&& scanelf --nobanner -E ET_DYN -BF '%F' --recursive /usr/local | xargs -r strip --strip-unneeded \
-	&& runDeps="$( \
-		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
-			| tr ',' '\n' \
-			| sort -u \
-			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
-	)" \
-    && apk add --no-cache --virtual .run-rundeps \
-		$runDeps \
-        openjdk8 \
-        maven \
-        make \
-        bash \
-        shadow \
-        git \
-        gcc \
-        python2 \
-        g++ \
-        openssh-client \
-        coreutils \
-    && apk --no-cache del .build-deps \
-    && rm /var/cache/apk/*
+    && apt-get purge -y --auto-remove $fetchDeps $buildDeps \
+    && apt-get clean \
+    && rm -rf $ERL_TOP /var/lib/apt/lists/*
 
-CMD ["sh"]
+CMD ["bash"]
