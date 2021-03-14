@@ -115,6 +115,9 @@ RUN set -xe \
     && rm -rf /root/.cache \
     && apt-get purge -y --auto-remove $fetchDeps $buildDeps \
     && apt-get clean \
-    && rm -rf $ERL_TOP /var/lib/apt/lists/*
+    && rm -rf $ERL_TOP /var/lib/apt/lists/* \
+    && echo "dash dash/sh boolean false" | debconf-set-selections \
+    && DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
+
 
 CMD ["bash"]
