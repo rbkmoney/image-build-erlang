@@ -1,9 +1,9 @@
-FROM erlang:24.0-rc1
+FROM erlang:24.0-rc3
 
 ENV LANG=C.UTF-8
 
-ENV ELVIS_VERSION="1.0.0"
-ENV ELVIS_VERSION_HASH="41c1b625f1f90f1a5e2d29b62594086d74c5b79c"
+ENV ELVIS_VERSION="1.0.1"
+ENV ELVIS_VERSION_HASH="bfd5eb2de47fc6c8491865b4426e6a329bcfdf95"
 
 ENV WOORL_COMMIT="1da263844344584cdb897371b8fa5fb60b0c3f77"
 ENV WOORL_COMMIT_HASH="bf1a28b3041da77517c74834338749ff194424d4"
@@ -14,8 +14,8 @@ ENV THRIFT_COMMIT_HASH="35314f4dd706a0e46dc5921d99a711a19d2f2e56"
 ENV SWAGGER_CODEGEN_COMMIT="0fa78105e99088dad26b0aa03cd5abddb3a2dd87"
 ENV SWAGGER_CODEGEN_HASH="126c8f8f71c0dfa6dc6caea0442c0167314b02b8"
 
-ENV ELIXIR_VERSION="v1.11.3"
-ENV ELIXIR_VERSION_HASH="c89ee0daff9391c4a0633303213cfaca9900117a"
+ENV ELIXIR_VERSION="v1.12.0-rc.0"
+ENV ELIXIR_VERSION_HASH="504530760b8126e2208ede6547eb24b80ca6bdc2"
 
 ENV SWAGGER_LIBDIR="/usr/local/lib/swagger-codegen"
 ENV SWAGGER_BINDIR="/usr/local/bin"
@@ -69,17 +69,17 @@ RUN set -xe \
     && rm -rf /usr/src/woorl \
 
     # Install Elvis
-#    && mkdir /usr/src/elvis \
-#    && cd /usr/src/elvis \
-#    && wget -q "https://github.com/inaka/elvis/archive/${ELVIS_VERSION}.tar.gz" -O elvis.tar.gz \
-#    && echo "${ELVIS_VERSION_HASH}  elvis.tar.gz" | sha1sum -c - \
-#    && tar xzf elvis.tar.gz --strip-components=1 \
-#    && rebar3 escriptize \
-#    && cp _build/default/bin/elvis /usr/local/bin/ \
-#    && chmod +x /usr/local/bin/elvis \
-#    && elvis -v \
-#    && cd / \
-#    && rm -rf /usr/src/elvis \
+    && mkdir /usr/src/elvis \
+    && cd /usr/src/elvis \
+    && wget -q "https://github.com/inaka/elvis/archive/${ELVIS_VERSION}.tar.gz" -O elvis.tar.gz \
+    && echo "${ELVIS_VERSION_HASH}  elvis.tar.gz" | sha1sum -c - \
+    && tar xzf elvis.tar.gz --strip-components=1 \
+    && rebar3 escriptize \
+    && cp _build/default/bin/elvis /usr/local/bin/ \
+    && chmod +x /usr/local/bin/elvis \
+    && elvis -v \
+    && cd / \
+    && rm -rf /usr/src/elvis \
 
     # Install Elixir
     && mkdir /usr/src/elixir \
