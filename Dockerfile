@@ -35,7 +35,7 @@ RUN set -xe \
     && apt-add-repository 'deb http://security.debian.org/debian-security stretch/updates main' \
     && apt-get update \
     && apt-get install -y --no-install-recommends openjdk-8-jdk-headless \
-    && apt-get install -y --no-install-recommends maven linux-perf \
+    && apt-get install -y --no-install-recommends maven linux-perf valgrind \
     && mkdir -p /usr/src \
 
     # Install thrift
