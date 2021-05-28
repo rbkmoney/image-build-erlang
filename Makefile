@@ -10,7 +10,7 @@ $(SERVICE_NAME): .state
 COMMIT := $(shell git rev-parse HEAD)
 rev = $(shell git rev-parse --abbrev-ref HEAD)
 BRANCH := $(shell \
-if [[ "${rev}" != "HEAD" ]]; then \
+if [ "${rev}" != "HEAD" ]; then \
 	echo "${rev}" ; \
 elif [ -n "${BRANCH_NAME}" ]; then \
 	echo "${BRANCH_NAME}"; \
