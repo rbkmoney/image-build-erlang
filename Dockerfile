@@ -1,9 +1,9 @@
-FROM erlang:23.2.7
+FROM erlang:24.0.2
 
 ENV LANG=C.UTF-8
 
-ENV ELVIS_VERSION="1.0.0"
-ENV ELVIS_VERSION_HASH="41c1b625f1f90f1a5e2d29b62594086d74c5b79c"
+ENV ELVIS_VERSION="1.0.1"
+ENV ELVIS_VERSION_HASH="bfd5eb2de47fc6c8491865b4426e6a329bcfdf95"
 
 ENV WOORL_COMMIT="1da263844344584cdb897371b8fa5fb60b0c3f77"
 ENV WOORL_COMMIT_HASH="bf1a28b3041da77517c74834338749ff194424d4"
@@ -14,8 +14,8 @@ ENV THRIFT_COMMIT_HASH="35314f4dd706a0e46dc5921d99a711a19d2f2e56"
 ENV SWAGGER_CODEGEN_COMMIT="0fa78105e99088dad26b0aa03cd5abddb3a2dd87"
 ENV SWAGGER_CODEGEN_HASH="126c8f8f71c0dfa6dc6caea0442c0167314b02b8"
 
-ENV ELIXIR_VERSION="v1.11.3"
-ENV ELIXIR_VERSION_HASH="c89ee0daff9391c4a0633303213cfaca9900117a"
+ENV ELIXIR_VERSION="v1.12.1"
+ENV ELIXIR_VERSION_HASH="3a789a3c53b90db16d6b7428132276bf489f0e00"
 
 ENV SWAGGER_LIBDIR="/usr/local/lib/swagger-codegen"
 ENV SWAGGER_BINDIR="/usr/local/bin"
@@ -35,7 +35,7 @@ RUN set -xe \
     && apt-add-repository 'deb http://security.debian.org/debian-security stretch/updates main' \
     && apt-get update \
     && apt-get install -y --no-install-recommends openjdk-8-jdk-headless \
-    && apt-get install -y --no-install-recommends maven \
+    && apt-get install -y --no-install-recommends maven linux-perf valgrind \
     && mkdir -p /usr/src \
 
     # Install thrift
@@ -115,9 +115,6 @@ RUN set -xe \
     && rm -rf /root/.cache \
     && apt-get purge -y --auto-remove $fetchDeps $buildDeps \
     && apt-get clean \
-    && rm -rf $ERL_TOP /var/lib/apt/lists/* \
-    && echo "dash dash/sh boolean false" | debconf-set-selections \
-    && DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
-
+    && rm -rf $ERL_TOP /var/lib/apt/lists/*
 
 CMD ["bash"]
