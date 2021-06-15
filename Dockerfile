@@ -116,8 +116,10 @@ RUN set -xe \
     && apt-get purge -y --auto-remove $fetchDeps $buildDeps \
     && apt-get clean \
     && rm -rf $ERL_TOP /var/lib/apt/lists/* \
-    && echo "dash dash/sh boolean false" | debconf-set-selections \
-    && DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
 
+    # Default bash
+    && echo "dash dash/sh boolean false" | debconf-set-selections \
+    && DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash \
+    && sed -i "s|SHELL=/bin/sh|SHELL=/bin/bash|g" /etc/default/useradd
 
 CMD ["bash"]
