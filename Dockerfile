@@ -1,4 +1,4 @@
-FROM erlang:23.2.7
+FROM erlang:23.3.4
 
 ENV LANG=C.UTF-8
 
