@@ -36,10 +36,12 @@ RUN set -xe \
     && apt-get update \
     && apt-get install -y --no-install-recommends openjdk-8-jdk-headless \
     && apt-get install -y --no-install-recommends maven linux-perf valgrind \
-    && mkdir -p /usr/src \
+    && mkdir -p /usr/src
 
-    # Install thrift
-    && mkdir /usr/src/thrift \
+#
+# Install thrift
+#
+RUN mkdir /usr/src/thrift \
     && cd /usr/src/thrift \
     && wget -q "https://github.com/rbkmoney/thrift/archive/${THRIFT_COMMIT}.tar.gz" -O thrift.tar.gz \
     && echo "${THRIFT_COMMIT_HASH}  thrift.tar.gz" | sha1sum -c - \
@@ -54,10 +56,12 @@ RUN set -xe \
     && make -j$(getconf _NPROCESSORS_ONLN) \
     && make install \
     && cd / \
-    && rm -rf /usr/src/thrift \
+    && rm -rf /usr/src/thrift
 
-    # Install woorl
-    && mkdir /usr/src/woorl \
+#
+# Install woorl
+#
+RUN mkdir /usr/src/woorl \
     && cd /usr/src/woorl \
     && wget -q "https://github.com/rbkmoney/woorl/archive/${WOORL_COMMIT}.tar.gz" -O woorl.tar.gz \
     && echo "${WOORL_COMMIT_HASH}  woorl.tar.gz" | sha1sum -c - \
@@ -66,10 +70,12 @@ RUN set -xe \
     && cp _build/default/bin/woorl /usr/local/bin/ \
     && chmod +x /usr/local/bin/woorl \
     && cd / \
-    && rm -rf /usr/src/woorl \
+    && rm -rf /usr/src/woorl
 
-    # Install Elvis
-    && mkdir /usr/src/elvis \
+#
+# Install Elvis
+#
+RUN mkdir /usr/src/elvis \
     && cd /usr/src/elvis \
     && wget -q "https://github.com/inaka/elvis/archive/${ELVIS_VERSION}.tar.gz" -O elvis.tar.gz \
     && echo "${ELVIS_VERSION_HASH}  elvis.tar.gz" | sha1sum -c - \
@@ -79,20 +85,24 @@ RUN set -xe \
     && chmod +x /usr/local/bin/elvis \
     && elvis -v \
     && cd / \
-    && rm -rf /usr/src/elvis \
+    && rm -rf /usr/src/elvis
 
-    # Install Elixir
-    && mkdir /usr/src/elixir \
+#
+# Install Elixir
+#
+RUN mkdir /usr/src/elixir \
     && cd /usr/src/elixir \
     && wget -q "https://github.com/elixir-lang/elixir/archive/${ELIXIR_VERSION}.tar.gz" -O elixir.tar.gz \
     && echo "${ELIXIR_VERSION_HASH}  elixir.tar.gz" | sha1sum -c - \
     && tar xzf elixir.tar.gz --strip-components=1 \
     && make install clean \
     && cd / \
-    && rm -rf /usr/src/elixir \
+    && rm -rf /usr/src/elixir
 
-    # Install swagger
-    && mkdir -p /usr/src/swagger-codegen \
+#
+# Install swagger
+#
+RUN mkdir -p /usr/src/swagger-codegen \
     && cd /usr/src/swagger-codegen \
     && wget \
         -q \
@@ -107,18 +117,22 @@ RUN set -xe \
     && echo "java -jar \"${SWAGGER_LIBDIR}/${SWAGGER_JARFILE}\" \$*" >> "${SWAGGER_BINDIR}/swagger-codegen" \
     && chmod +x "${SWAGGER_BINDIR}/swagger-codegen" \
     && cd / \
-    && rm -rf /usr/src/swagger-codegen \
+    && rm -rf /usr/src/swagger-codegen
 
-    # Cleanup
-    && rm -rf /usr/src \
+#
+# Cleanup
+#
+RUN rm -rf /usr/src \
     && rm -rf /root/.m2 \
     && rm -rf /root/.cache \
     && apt-get purge -y --auto-remove $fetchDeps $buildDeps \
     && apt-get clean \
-    && rm -rf $ERL_TOP /var/lib/apt/lists/* \
+    && rm -rf $ERL_TOP /var/lib/apt/lists/*
 
-    # Default bash
-    && echo "dash dash/sh boolean false" | debconf-set-selections \
+#
+# Default bash
+#
+RUN echo "dash dash/sh boolean false" | debconf-set-selections \
     && DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash \
     && sed -i "s|SHELL=/bin/sh|SHELL=/bin/bash|g" /etc/default/useradd
 
