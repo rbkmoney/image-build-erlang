@@ -4,10 +4,8 @@ build('image-build-erlang', 'docker-host') {
   checkoutRepo()
     runStage('build image') {
       withPublicRegistry() {
-        withPrivateRegistry() {
-          sh 'make build-erlang'
-        }
-      }  
+        sh 'make build-erlang'
+      }
   }
   try {
     if (env.BRANCH_NAME == 'master') {
