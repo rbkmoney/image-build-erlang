@@ -4,7 +4,9 @@ build('image-build-erlang', 'docker-host') {
   checkoutRepo()
     runStage('build image') {
       withPublicRegistry() {
-        sh 'make build-erlang'
+        withPrivateRegistry() {
+          sh 'make build-erlang'
+        }
       }
   }
   withPrivateRegistry() {

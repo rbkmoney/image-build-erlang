@@ -1,9 +1,15 @@
 SERVICE_NAME := build-erlang
 ORG_NAME ?= rbkmoney
-SERVICE_IMAGE_NAME ?= $(ORG_NAME)/build-erlang
+SERVICE_IMAGE_NAME ?= $(ORG_NAME)/$(SERVICE_NAME)
+
+BASE_IMAGE_NAME := library/erlang
+BASE_IMAGE_TAG := 24.0.5.0
+
+REGISTRY ?= dr2.rbkmoney.com
 DOCKER ?= docker
 DOCKER_BUILD_OPTIONS ?=
-.PHONY: $(SERVICE_NAME) push clean tag
+
+.PHONY: $(SERVICE_NAME) push clean
 $(SERVICE_NAME): .state
 
 COMMIT := $(shell git rev-parse HEAD)
@@ -19,22 +25,13 @@ fi)
 
 .state:
 	$(eval TAG := $(shell git rev-parse HEAD))
-	$(DOCKER) build -t "$(SERVICE_IMAGE_NAME):$(TAG)" $(DOCKER_BUILD_OPTIONS) .
+	$(DOCKER) build -t "$(REGISTRY)/$(SERVICE_IMAGE_NAME):$(TAG)" $(DOCKER_BUILD_OPTIONS) .
 	echo $(TAG) > $@
 
-tag:
-	$(if $(REGISTRY),,echo "REGISTRY is not set" ; exit 1)
-	$(eval TAG := $(shell cat .state))
-	$(DOCKER) tag "$(SERVICE_IMAGE_NAME):$(TAG)" "$(REGISTRY)/$(SERVICE_IMAGE_NAME):$(TAG)"
-
-push: tag
-	$(if $(REGISTRY),,echo "REGISTRY is not set" ; exit 1)
-	$(eval TAG := $(shell cat .state))
-	$(DOCKER) push "$(REGISTRY)/$(SERVICE_IMAGE_NAME):$(TAG)"
+push:
+	$(DOCKER) push "$(REGISTRY)/$(SERVICE_IMAGE_NAME):$(shell cat .state)"
 
 clean:
-	$(if $(REGISTRY),,@echo "REGISTRY is not set" ; exit 1)
-	test -f .state
-	$(eval TAG := $(shell cat .state))
-	$(DOCKER) rmi -f "$(REGISTRY)/$(SERVICE_IMAGE_NAME):$(TAG)" "$(SERVICE_IMAGE_NAME):$(TAG)" \
+	test -f .state \
+	&& $(DOCKER) rmi -f "$(REGISTRY)/$(SERVICE_IMAGE_NAME):$(shell cat .state)" \
 	&& rm .state

@@ -34,7 +34,7 @@ jobs:
         # See https://docs.github.com/en/packages/guides/pushing-and-pulling-docker-images for details
         password: ${{ secrets.CR_PAT }}
     - name: Build image
-      run: make
+      run: make build-erlang
       env:
         ORG_NAME: ${{ github.repository_owner }}
         REGISTRY: ghcr.io
