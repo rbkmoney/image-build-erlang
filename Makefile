@@ -1,9 +1,11 @@
 SERVICE_NAME := build-erlang
 ORG_NAME ?= rbkmoney
-SERVICE_IMAGE_NAME ?= $(ORG_NAME)/build-erlang
-REGISTRY := dr2.rbkmoney.com
+SERVICE_IMAGE_NAME ?= $(ORG_NAME)/$(SERVICE_NAME)
+
+REGISTRY ?= dr2.rbkmoney.com
 DOCKER ?= docker
 DOCKER_BUILD_OPTIONS ?=
+
 .PHONY: $(SERVICE_NAME) push clean
 $(SERVICE_NAME): .state
 
