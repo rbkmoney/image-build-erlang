@@ -1,0 +1,6 @@
+*~
+*.sublime-workspace
+.DS_Store
+.image-tag
+.state
+

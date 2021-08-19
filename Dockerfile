@@ -8,14 +8,14 @@ ENV ELVIS_VERSION_HASH="bfd5eb2de47fc6c8491865b4426e6a329bcfdf95"
 ENV WOORL_COMMIT="1da263844344584cdb897371b8fa5fb60b0c3f77"
 ENV WOORL_COMMIT_HASH="bf1a28b3041da77517c74834338749ff194424d4"
 
-ENV THRIFT_COMMIT="4c1230a22d137543c62de456c45cda348214b34d"
-ENV THRIFT_COMMIT_HASH="35314f4dd706a0e46dc5921d99a711a19d2f2e56"
+ENV THRIFT_COMMIT="c6c39e7b377bb36440cbc55d82ee30f8e7e395bc"
+ENV THRIFT_COMMIT_HASH="c1c6479200f2c83cac1473a5bb91a3af15d371cb"
 
-ENV SWAGGER_CODEGEN_COMMIT="9e9b350d99e0030161dcc4398d1e5aff1c4c5ac3"
-ENV SWAGGER_CODEGEN_HASH="94b71710d82d58095b5c57412b2c456287c44e7f"
+ENV SWAGGER_CODEGEN_COMMIT="76e05f9981e4a1630cd49f13ea22697fe1c6b775"
+ENV SWAGGER_CODEGEN_HASH="2a188f0c5efb4055068189d5abf62c80f6f8cc7c"
 
-ENV ELIXIR_VERSION="v1.12.1"
-ENV ELIXIR_VERSION_HASH="3a789a3c53b90db16d6b7428132276bf489f0e00"
+ENV ELIXIR_VERSION="v1.12.2"
+ENV ELIXIR_VERSION_HASH="b525e7357b939156915580de0a5db8162a123ede"
 
 ENV SWAGGER_LIBDIR="/usr/local/lib/swagger-codegen"
 ENV SWAGGER_BINDIR="/usr/local/bin"
@@ -103,21 +103,19 @@ RUN mkdir /usr/src/elixir \
 # Install swagger
 #
 RUN mkdir -p /usr/src/swagger-codegen \
-    && cd /usr/src/swagger-codegen \
-    && wget \
-        -q \
-        "https://github.com/rbkmoney/swagger-codegen/archive/${SWAGGER_CODEGEN_COMMIT}.tar.gz" -O swagger.tar.gz \
-    && echo "${SWAGGER_CODEGEN_HASH}  swagger.tar.gz" | sha1sum -c - \
-    && tar xzf swagger.tar.gz --strip-components=1 \
-    && mvn package -DskipTests \
-    && mkdir -p "${SWAGGER_LIBDIR}" "${SWAGGER_BINDIR}" \
-    && cp -v "modules/swagger-codegen-cli/target/${SWAGGER_JARFILE}" "${SWAGGER_LIBDIR}/${SWAGGER_JARFILE}" \
-    && test -f "${SWAGGER_LIBDIR}/${SWAGGER_JARFILE}" || exit 1 \
-    && echo "#!/bin/sh" > "${SWAGGER_BINDIR}/swagger-codegen" \
-    && echo "java -jar \"${SWAGGER_LIBDIR}/${SWAGGER_JARFILE}\" \$*" >> "${SWAGGER_BINDIR}/swagger-codegen" \
-    && chmod +x "${SWAGGER_BINDIR}/swagger-codegen" \
-    && cd / \
-    && rm -rf /usr/src/swagger-codegen
+  && cd /usr/src/swagger-codegen \
+  && wget -q "https://github.com/rbkmoney/swagger-codegen/archive/${SWAGGER_CODEGEN_COMMIT}.tar.gz" -O swagger.tar.gz \
+  && echo "${SWAGGER_CODEGEN_HASH}  swagger.tar.gz" | sha1sum -c - \
+  && tar xzf swagger.tar.gz --strip-components=1 \
+  && mvn package -DskipTests \
+  && mkdir -p "${SWAGGER_LIBDIR}" "${SWAGGER_BINDIR}" \
+  && cp -v "modules/swagger-codegen-cli/target/${SWAGGER_JARFILE}" "${SWAGGER_LIBDIR}/${SWAGGER_JARFILE}" \
+  && test -f "${SWAGGER_LIBDIR}/${SWAGGER_JARFILE}" || exit 1 \
+  && echo "#!/bin/sh" > "${SWAGGER_BINDIR}/swagger-codegen" \
+  && echo "java -jar \"${SWAGGER_LIBDIR}/${SWAGGER_JARFILE}\" \$*" >> "${SWAGGER_BINDIR}/swagger-codegen" \
+  && chmod +x "${SWAGGER_BINDIR}/swagger-codegen" \
+  && cd / \
+  && rm -rf /usr/src/swagger-codegen
 
 #
 # Cleanup
