@@ -11,8 +11,8 @@ ENV WOORL_COMMIT_HASH="bf1a28b3041da77517c74834338749ff194424d4"
 ENV THRIFT_COMMIT="c6c39e7b377bb36440cbc55d82ee30f8e7e395bc"
 ENV THRIFT_COMMIT_HASH="c1c6479200f2c83cac1473a5bb91a3af15d371cb"
 
-ENV SWAGGER_CODEGEN_COMMIT="76e05f9981e4a1630cd49f13ea22697fe1c6b775"
-ENV SWAGGER_CODEGEN_HASH="2a188f0c5efb4055068189d5abf62c80f6f8cc7c"
+ENV SWAGGER_CODEGEN_COMMIT="8b9cf644b09be4249a73245d30d78751c2544458"
+ENV SWAGGER_CODEGEN_HASH="5cdd25be9216192daf76f8e4110bea61fb8053cd"
 
 ENV ELIXIR_VERSION="v1.12.2"
 ENV ELIXIR_VERSION_HASH="b525e7357b939156915580de0a5db8162a123ede"
@@ -103,19 +103,19 @@ RUN mkdir /usr/src/elixir \
 # Install swagger
 #
 RUN mkdir -p /usr/src/swagger-codegen \
-  && cd /usr/src/swagger-codegen \
-  && wget -q "https://github.com/rbkmoney/swagger-codegen/archive/${SWAGGER_CODEGEN_COMMIT}.tar.gz" -O swagger.tar.gz \
-  && echo "${SWAGGER_CODEGEN_HASH}  swagger.tar.gz" | sha1sum -c - \
-  && tar xzf swagger.tar.gz --strip-components=1 \
-  && mvn package -DskipTests \
-  && mkdir -p "${SWAGGER_LIBDIR}" "${SWAGGER_BINDIR}" \
-  && cp -v "modules/swagger-codegen-cli/target/${SWAGGER_JARFILE}" "${SWAGGER_LIBDIR}/${SWAGGER_JARFILE}" \
-  && test -f "${SWAGGER_LIBDIR}/${SWAGGER_JARFILE}" || exit 1 \
-  && echo "#!/bin/sh" > "${SWAGGER_BINDIR}/swagger-codegen" \
-  && echo "java -jar \"${SWAGGER_LIBDIR}/${SWAGGER_JARFILE}\" \$*" >> "${SWAGGER_BINDIR}/swagger-codegen" \
-  && chmod +x "${SWAGGER_BINDIR}/swagger-codegen" \
-  && cd / \
-  && rm -rf /usr/src/swagger-codegen
+    && cd /usr/src/swagger-codegen \
+    && wget -q "https://github.com/rbkmoney/swagger-codegen/archive/${SWAGGER_CODEGEN_COMMIT}.tar.gz" -O swagger.tar.gz \
+    && echo "${SWAGGER_CODEGEN_HASH}  swagger.tar.gz" | sha1sum -c - \
+    && tar xzf swagger.tar.gz --strip-components=1 \
+    && mvn package -DskipTests \
+    && mkdir -p "${SWAGGER_LIBDIR}" "${SWAGGER_BINDIR}" \
+    && cp -v "modules/swagger-codegen-cli/target/${SWAGGER_JARFILE}" "${SWAGGER_LIBDIR}/${SWAGGER_JARFILE}" \
+    && test -f "${SWAGGER_LIBDIR}/${SWAGGER_JARFILE}" || exit 1 \
+    && echo "#!/bin/sh" > "${SWAGGER_BINDIR}/swagger-codegen" \
+    && echo "java -jar \"${SWAGGER_LIBDIR}/${SWAGGER_JARFILE}\" \$*" >> "${SWAGGER_BINDIR}/swagger-codegen" \
+    && chmod +x "${SWAGGER_BINDIR}/swagger-codegen" \
+    && cd / \
+    && rm -rf /usr/src/swagger-codegen
 
 #
 # Cleanup
