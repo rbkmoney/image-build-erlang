@@ -23,7 +23,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-buildx-
     - name: Build image
-      run: make
+      run: make build-erlang
       env:
         ORG_NAME: ${{ github.repository_owner }}
         REGISTRY: ghcr.io
