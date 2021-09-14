@@ -3,21 +3,23 @@
 build('image-build-erlang', 'docker-host') {
   checkoutRepo()
     runStage('build image') {
-      withPrivateRegistry() {
-        sh 'make build-erlang'
+      withPublicRegistry() {
+        withPrivateRegistry() {
+          sh 'make build-erlang'
+        }
       }
   }
-  try {
-    if (env.BRANCH_NAME == 'master') {
-      runStage('docker image push') {
-        withPrivateRegistry() {
+  withPrivateRegistry() {
+    try {
+      if (env.BRANCH_NAME == 'master') {
+        runStage('docker image push') {
           sh 'make push'
         }
       }
-    }
-  } finally {
-    runStage('rm local image') {
-      sh 'make clean'
+    } finally {
+      runStage('rm local image') {
+        sh 'make clean'
+      }
     }
   }
 }
